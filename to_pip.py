@@ -96,7 +96,7 @@ repository: https://upload.pypi.org/legacy/
 username: {pypi_username}
 password: {pypi_password}
 """
-    with open(os.path.expanduser("~/.pypirc"), "w") as f:
+    with open(".pypirc", "w") as f:
         f.write(pypirc_content)
 
 
@@ -116,8 +116,7 @@ def to_pip(python_files, package_name, package_version, pypi_username=None, pypi
     if build_exit_code != 0:
         print("Error: Failed to build the package.")
         sys.exit(1)
-
-    exit_code = os.system(f"cd {package_dir} && twine upload dist/*")
+    exit_code = os.system(f"cd {package_dir} && twine upload --config-file ../.pypirc dist/*")
     if exit_code != 0:
         print("Error: Failed to upload the package.")
         sys.exit(1)
