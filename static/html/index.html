@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload pip package</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            <h1 class="text-center mt-5">Upload pip package</h1>
+            <form class="mt-4" action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="mb-3">
+                    <label for="package_name" class="form-label">Package Name</label>
+                    <input type="text" class="form-control" id="package_name" name="package_name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="package_version" class="form-label">Package Version</label>
+                    <input type="text" class="form-control" id="package_version" name="package_version" required>
+                </div>
+                <div class="mb-3">
+                    <label for="pypi_username" class="form-label">PyPI Username</label>
+                    <input type="text" class="form-control" id="pypi_username" name="pypi_username">
+                </div>
+                <div class="mb-3">
+                    <label for="pypi_password" class="form-label">PyPI Password</label>
+                    <input type="password" class="form-control" id="pypi_password" name="pypi_password">
+                </div>
+                <div class="mb-3">
+                    <label for="python_files" class="form-label">Python Files</label>
+                    <input type="file" class="form-control" id="python_files" name="python_files" multiple accept=".py"
+                           required>
+                </div>
+                <div class="mb-3">
+                    <label for="readme" class="form-label">README.md</label>
+                    <input type="file" class="form-control" id="readme" name="readme" accept=".md">
+                </div>
+                <div class="mb-3">
+                    <label for="requirements" class="form-label">requirements.txt</label>
+                    <input type="file" class="form-control" id="requirements" name="requirements" accept=".txt">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("uploadForm");
+
+            // Load saved values from localStorage
+            const package_name = localStorage.getItem("package_name");
+            const package_version = localStorage.getItem("package_version");
+            const pypi_username = localStorage.getItem("pypi_username");
+            const pypi_password = localStorage.getItem("pypi_password");
+
+            if (package_name) {
+                document.getElementById("package_name").value = package_name;
+            }
+            if (package_version) {
+                document.getElementById("package_version").value = package_version;
+            }
+            if (pypi_username) {
+                document.getElementById("pypi_username").value = pypi_username;
+            }
+            if (pypi_password) {
+                document.getElementById("pypi_password").value = pypi_password;
+            }
+
+            // Save values to localStorage when form is submitted
+            form.addEventListener("submit", function(event) {
+                localStorage.setItem("package_name", document.getElementById("package_name").value);
+                localStorage.setItem("package_version", document.getElementById("package_version").value);
+                localStorage.setItem("pypi_username", document.getElementById("pypi_username").value);
+                localStorage.setItem("pypi_password", document.getElementById("pypi_password").value);
+            });
+        });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
