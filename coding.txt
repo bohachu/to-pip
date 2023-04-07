@@ -1,5 +1,5 @@
 v1.8
-    [http://to-pip.falra.net/](https://to-pip-jqvkl3xr3a-uc.a.run.app)
+    [http://to-pip.falra.net](https://to-pip-jqvkl3xr3a-uc.a.run.app)
 
 v1.7
     update README.md with cloud run URL
