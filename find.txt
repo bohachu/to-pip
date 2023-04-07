@@ -81,7 +81,7 @@ setup(
         f.write(setup_py)
 
 
-def handle_readme(package_dir):
+def handle_readme(package_dir, package_name):
     if os.path.exists("README.md"):
         shutil.copy("README.md", os.path.join(package_dir, "README.md"))
     else:
@@ -100,7 +100,7 @@ repository: https://upload.pypi.org/legacy/
 username: {pypi_username}
 password: {pypi_password}
 """
-    with open(os.path.expanduser("~/.pypirc"), "w") as f:
+    with open("~/.pypirc", "w") as f:
         f.write(pypirc_content)
 
 
@@ -110,12 +110,17 @@ def to_pip(python_files, package_name, package_version, pypi_username=None, pypi
 
     package_dir = create_package_dir(package_name, package_version, python_files)
     write_setup_py(package_dir, package_name, package_version, python_files)
-    handle_readme(package_dir)
+    handle_readme(package_dir, package_name)
 
     if pypi_username and pypi_password:
         create_pypirc_file(pypi_username, pypi_password)
 
-    exit_code = os.system(f"cd {package_dir} && twine upload dist/*")
+    # Build the package before uploading
+    build_exit_code = os.system(f"cd {package_dir} && python setup.py sdist bdist_wheel")
+    if build_exit_code != 0:
+        print("Error: Failed to build the package.")
+        sys.exit(1)
+    exit_code = os.system(f"cd {package_dir} && twine upload --config-file ~/.pypirc dist/*")
     if exit_code != 0:
         print("Error: Failed to upload the package.")
         sys.exit(1)
@@ -406,8 +411,17 @@ async def upload_files(
             content = await requirements.read()
             buffer.write(content)
 
+    # Save the original working directory
+    original_cwd = os.getcwd()
+
+    # Change the current working directory to the temporary directory
     os.chdir(tmp_dir)
-    to_pip(saved_files, package_name, package_version, pypi_username,
-           pypi_password)  # Pass saved_files as the first argument
+
+    try:
+        # Call the to_pip() function with the saved files
+        to_pip(saved_files, package_name, package_version, pypi_username, pypi_password)
+    finally:
+        # Restore the original working directory
+        os.chdir(original_cwd)
 
     return JSONResponse({"message": "Package uploaded and processed successfully"})

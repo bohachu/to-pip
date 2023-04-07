@@ -49,8 +49,17 @@ async def upload_files(
             content = await requirements.read()
             buffer.write(content)
 
+    # Save the original working directory
+    original_cwd = os.getcwd()
+
+    # Change the current working directory to the temporary directory
     os.chdir(tmp_dir)
-    to_pip(saved_files, package_name, package_version, pypi_username,
-           pypi_password)  # Pass saved_files as the first argument
+
+    try:
+        # Call the to_pip() function with the saved files
+        to_pip(saved_files, package_name, package_version, pypi_username, pypi_password)
+    finally:
+        # Restore the original working directory
+        os.chdir(original_cwd)
 
     return JSONResponse({"message": "Package uploaded and processed successfully"})

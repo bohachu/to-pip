@@ -1,56 +1,49 @@
-# To-pip
+# to-pip
 
-`to-pip` is a command line tool that helps you create Python packages from your Python files and upload them to PyPI with ease.
-
-## Installation
-
-To install `to-pip`, use the following command:
-
-```bash
-python -m pip install to-pip
-```
+`to-pip` is a tool that makes it easy to convert a set of Python files into a Python package that can be uploaded to PyPI. It can also upload the package to PyPI for you, if you provide your PyPI credentials. 
 
 ## Usage
 
-To use `to-pip`, simply run the following command:
+### Web Interface
 
-```bash
+You can use the web interface of `to-pip` [here](https://to-pip-jqvkl3xr3a-uc.a.run.app). Simply upload your Python files, enter your package name and version, and click "Create Package". If you provide your PyPI credentials, you can also choose to upload the package to PyPI directly from the web interface.
+
+### Command Line Interface
+
+You can also use the `to-pip` command-line tool to create a package from your Python files. To use it, simply install the `to-pip` package using pip:
+
+```
+pip install to-pip
+```
+
+Then, run the `to-pip` command with the following arguments:
+
+```
 python -m to_pip -n <package_name> -v <package_version> [-u <pypi_username> -p <pypi_password>] <python_files>
 ```
 
-Where:
-- `<package_name>` is the name of your package.
-- `<package_version>` is the version of your package.
-- `<pypi_username>` is your PyPI username (optional).
-- `<pypi_password>` is your PyPI password (optional).
-- `<python_files>` are the Python files you want to include in your package.
+Here is what each argument means:
 
-For example, if you have a file `hello.py` that you want to include in your package, you can run the following command:
+- `-n` or `--package_name`: The name of your package.
+- `-v` or `--package_version`: The version of your package in `x.x.x` format.
+- `-u` or `--pypi_username` (optional): Your PyPI username. If you provide this, `to-pip` will upload your package to PyPI for you.
+- `-p` or `--pypi_password` (optional): Your PyPI password. If you provide this, `to-pip` will upload your package to PyPI for you.
+- `<python_files>`: The Python files that you want to include in your package.
 
-```bash
-python -m to_pip -n hello-world -v 0.1.0 hello.py
+### Package Usage
+
+Once you have created your package, you can install it using pip:
+
+```
+pip install <package_name>
 ```
 
-This will create a package called `hello-world` with version `0.1.0`, and containing the `hello.py` file.
+After installing the package, you can use any functions or classes defined in your Python files as normal. 
 
-If you have multiple Python files that you want to include in your package, you can specify them all as arguments:
+### Example
 
-```bash
-python -m to_pip -n hello-world -v 0.1.0 hello.py world.py
+Let's say you have two Python files, `hello.py` and `world.py`, that you want to package into a package called `helloworld` with version `1.0.0`. Here's how you would use `to-pip` to create the package:
+
 ```
-
-By default, `to-pip` will create a console script for each Python file you include in your package. For example, if you include `hello.py` and `world.py`, `to-pip` will create two console scripts called `hello` and `world`. You can run these scripts from the command line once you install your package.
-
-## Uploading to PyPI
-
-If you want to upload your package to PyPI, you can provide your PyPI credentials using the `-u` and `-p` options:
-
-```bash
-python -m to_pip -n hello-world -v 0.1.0 -u <pypi_username> -p <pypi_password> hello.py
+python -m to_pip -n helloworld -v 1.0.0 hello.py world.py
 ```
-
-This will upload your package to PyPI once it is created.
-
-## License
-
-`to-pip` is distributed under the MIT License. See `LICENSE` for more information.

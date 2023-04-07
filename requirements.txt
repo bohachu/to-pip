@@ -3,3 +3,4 @@ fastapi
 setuptools
 twine
 python-multipart
+uvicorn
