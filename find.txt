@@ -26,20 +26,17 @@ def parse_args():
     return parser.parse_args()
 
 
-def to_pip():
-    args = parse_args()
-
-    if not args.python_files:
-        usage()
-
+def create_package_dir(package_name, package_version, python_files):
     tmp_dir = tempfile.mkdtemp()
-    package_dir = os.path.join(tmp_dir, f"{args.package_name}-{args.package_version}")
+    package_dir = os.path.join(tmp_dir, f"{package_name}-{package_version}")
     os.makedirs(package_dir)
 
-    for file in args.python_files:
-        with open(file) as src, open(
-                os.path.join(package_dir, os.path.basename(file)), "w"
-        ) as dest:
+    for file in python_files:
+        file_name = os.path.basename(file)
+        if os.path.exists(os.path.join(package_dir, file_name)):
+            print(f"Error: File {file_name} already exists in the package directory.")
+            sys.exit(1)
+        with open(file) as src, open(os.path.join(package_dir, file_name), "w") as dest:
             dest.write("#!/usr/bin/env python\n")
             dest.write(src.read())
         os.system(f"chmod +x {os.path.join(package_dir, os.path.basename(file))}")
@@ -47,11 +44,15 @@ def to_pip():
     if os.path.exists("requirements.txt"):
         shutil.copy("requirements.txt", os.path.join(package_dir, "requirements.txt"))
 
-    modules = ", ".join([f"'{os.path.basename(file).split('.')[0].replace('-', '_')}'" for file in args.python_files])
+    return package_dir
+
+
+def write_setup_py(package_dir, package_name, package_version, python_files):
+    modules = ", ".join([f"'{os.path.basename(file).split('.')[0].replace('-', '_')}'" for file in python_files])
     entry_points = ", ".join(
         [
             f"{os.path.basename(file).split('.')[0].replace('-', '_')} = {os.path.basename(file).split('.')[0].replace('-', '_')}:main"
-            for file in args.python_files
+            for file in python_files
         ]
     )
 
@@ -62,8 +63,8 @@ with open('requirements.txt') as f:
     requirements = [line.strip() for line in f.readlines()]
 
 setup(
-    name="{args.package_name}",
-    version="{args.package_version}",
+    name="{package_name}",
+    version="{package_version}",
     packages=find_packages(),
     py_modules=[{modules}],
     install_requires=requirements,
@@ -79,34 +80,63 @@ setup(
     with open(os.path.join(package_dir, "setup.py"), "w") as f:
         f.write(setup_py)
 
+
+def handle_readme(package_dir):
     if os.path.exists("README.md"):
         shutil.copy("README.md", os.path.join(package_dir, "README.md"))
+    else:
+        with open(os.path.join(package_dir, "README.md"), "w") as f:
+            f.write(f"# {package_name}\n\nThis is a placeholder README.md file.")
 
-    os.system(f"cd {package_dir} && python setup.py sdist bdist_wheel")
 
-    if args.pypi_username and args.pipy_password:
-        pypirc_content = f"""
+def create_pypirc_file(pypi_username, pypi_password):
+    pypirc_content = f"""
 [distutils]
 index-servers =
   pypi
 
 [pypi]
 repository: https://upload.pypi.org/legacy/
-username: {args.pipy_username}
-password: {args.pipy_password}
+username: {pypi_username}
+password: {pypi_password}
 """
-        with open(os.path.expanduser("~/.pypirc"), "w") as f:
-            f.write(pypirc_content)
+    with open(os.path.expanduser("~/.pypirc"), "w") as f:
+        f.write(pypirc_content)
 
-    os.system(f"cd {package_dir} && twine upload dist/*")
+
+def to_pip(python_files, package_name, package_version, pypi_username=None, pypi_password=None):
+    if not python_files:
+        usage()
+
+    package_dir = create_package_dir(package_name, package_version, python_files)
+    write_setup_py(package_dir, package_name, package_version, python_files)
+    handle_readme(package_dir)
+
+    if pypi_username and pypi_password:
+        create_pypirc_file(pypi_username, pypi_password)
+
+    exit_code = os.system(f"cd {package_dir} && twine upload dist/*")
+    if exit_code != 0:
+        print("Error: Failed to upload the package.")
+        sys.exit(1)
+
+
+def to_pip_args():
+    args = parse_args()
+
+    if not args.python_files:
+        usage()
+
+    to_pip(args.python_files, args.package_name, args.package_version, args.pypi_username, args.pypi_password)
 
 
 def main():
-    to_pip()
+    to_pip_args()
 
 
 if __name__ == "__main__":
     main()
+
 
 
 -- find.sh
@@ -243,18 +273,97 @@ twine upload dist/*
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Upload pip package</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-dark text-white">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            <h1 class="text-center mt-5">Upload pip package</h1>
+            <form class="mt-4" action="/api/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="mb-3">
+                    <label for="package_name" class="form-label">Package Name</label>
+                    <input type="text" class="form-control" id="package_name" name="package_name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="package_version" class="form-label">Package Version</label>
+                    <input type="text" class="form-control" id="package_version" name="package_version" required>
+                </div>
+                <div class="mb-3">
+                    <label for="pypi_username" class="form-label">PyPI Username</label>
+                    <input type="text" class="form-control" id="pypi_username" name="pypi_username">
+                </div>
+                <div class="mb-3">
+                    <label for="pypi_password" class="form-label">PyPI Password</label>
+                    <input type="password" class="form-control" id="pypi_password" name="pypi_password">
+                </div>
+                <div class="mb-3">
+                    <label for="python_files" class="form-label">Python Files</label>
+                    <input type="file" class="form-control" id="python_files" name="python_files" multiple accept=".py"
+                           required>
+                </div>
+                <div class="mb-3">
+                    <label for="readme" class="form-label">README.md</label>
+                    <input type="file" class="form-control" id="readme" name="readme" accept=".md">
+                </div>
+                <div class="mb-3">
+                    <label for="requirements" class="form-label">requirements.txt</label>
+                    <input type="file" class="form-control" id="requirements" name="requirements" accept=".txt">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("uploadForm");
+
+            // Load saved values from localStorage
+            const package_name = localStorage.getItem("package_name");
+            const package_version = localStorage.getItem("package_version");
+            const pypi_username = localStorage.getItem("pypi_username");
+            const pypi_password = localStorage.getItem("pypi_password");
+
+            if (package_name) {
+                document.getElementById("package_name").value = package_name;
+            }
+            if (package_version) {
+                document.getElementById("package_version").value = package_version;
+            }
+            if (pypi_username) {
+                document.getElementById("pypi_username").value = pypi_username;
+            }
+            if (pypi_password) {
+                document.getElementById("pypi_password").value = pypi_password;
+            }
+
+            // Save values to localStorage when form is submitted
+            form.addEventListener("submit", function(event) {
+                localStorage.setItem("package_name", document.getElementById("package_name").value);
+                localStorage.setItem("package_version", document.getElementById("package_version").value);
+                localStorage.setItem("pypi_username", document.getElementById("pypi_username").value);
+                localStorage.setItem("pypi_password", document.getElementById("pypi_password").value);
+            });
+        });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
 
 -- app.py
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+import os
+import tempfile
+
+from fastapi import FastAPI, Request, File, UploadFile, Form
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
+
+from to_pip import to_pip
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -263,3 +372,42 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return RedirectResponse("./static/html/index.html")
+
+
+@app.post("/api/upload")
+async def upload_files(
+        package_name: str = Form(...),
+        package_version: str = Form(...),
+        pypi_username: str = Form(""),
+        pypi_password: str = Form(""),
+        python_files: list[UploadFile] = File(...),
+        readme: UploadFile = File(None),
+        requirements: UploadFile = File(None)
+):
+    tmp_dir = tempfile.mkdtemp()
+    saved_files = []
+
+    for file in python_files:
+        file_path = os.path.join(tmp_dir, file.filename)
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        saved_files.append(file_path)
+
+    if readme:
+        readme_path = os.path.join(tmp_dir, "README.md")
+        with open(readme_path, "wb") as buffer:
+            content = await readme.read()
+            buffer.write(content)
+
+    if requirements:
+        requirements_path = os.path.join(tmp_dir, "requirements.txt")
+        with open(requirements_path, "wb") as buffer:
+            content = await requirements.read()
+            buffer.write(content)
+
+    os.chdir(tmp_dir)
+    to_pip(saved_files, package_name, package_version, pypi_username,
+           pypi_password)  # Pass saved_files as the first argument
+
+    return JSONResponse({"message": "Package uploaded and processed successfully"})
