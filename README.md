@@ -6,7 +6,7 @@
 
 ### Web Interface
 
-[http://to-pip.falra.net/](https://to-pip-jqvkl3xr3a-uc.a.run.app)
+[http://to-pip.falra.net/](http://to-pip.falra.net)
 
 You can use the web interface of `to-pip` [here](https://to-pip-jqvkl3xr3a-uc.a.run.app). Simply upload your Python files, enter your package name and version, and click "Create Package". If you provide your PyPI credentials, you can also choose to upload the package to PyPI directly from the web interface.
 
