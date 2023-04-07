@@ -1,3 +1,6 @@
+v1.7
+    update README.md with cloud run URL
+
 v1.6
     因為 vercel 不能跑 wheel 所以無法上 vercel
     改上 google cloud run
