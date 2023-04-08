@@ -1,4 +1,4 @@
-v1.9
+v1.9.0
     修改讓 html 引用
     <script src="https://cdn.jsdelivr.net/gh/bohachu/default-input@v1.1.0/defaultInput.js"></script>
 
