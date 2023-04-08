@@ -46,39 +46,7 @@
         </div>
     </div>
 </div>
-<script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById("uploadForm");
-
-            // Load saved values from localStorage
-            const package_name = localStorage.getItem("package_name");
-            const package_version = localStorage.getItem("package_version");
-            const pypi_username = localStorage.getItem("pypi_username");
-            const pypi_password = localStorage.getItem("pypi_password");
-
-            if (package_name) {
-                document.getElementById("package_name").value = package_name;
-            }
-            if (package_version) {
-                document.getElementById("package_version").value = package_version;
-            }
-            if (pypi_username) {
-                document.getElementById("pypi_username").value = pypi_username;
-            }
-            if (pypi_password) {
-                document.getElementById("pypi_password").value = pypi_password;
-            }
-
-            // Save values to localStorage when form is submitted
-            form.addEventListener("submit", function(event) {
-                localStorage.setItem("package_name", document.getElementById("package_name").value);
-                localStorage.setItem("package_version", document.getElementById("package_version").value);
-                localStorage.setItem("pypi_username", document.getElementById("pypi_username").value);
-                localStorage.setItem("pypi_password", document.getElementById("pypi_password").value);
-            });
-        });
-
-</script>
+<script src="https://cdn.jsdelivr.net/gh/bohachu/default-input@v1.1.0/defaultInput.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
