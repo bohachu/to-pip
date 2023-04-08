@@ -1,4 +1,6 @@
 2023-04-08 09:08 Bowen: 帥！已經可以 to_run.sh 到 google cloud run 自動化
+v1.9.1
+    新增加 to_cloud_run.py 很不錯
 
 v1.9.0
     修改讓 html 引用
