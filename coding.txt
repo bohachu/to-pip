@@ -1,3 +1,6 @@
+2023-04-17 11:18 Bowen
+    todo 可以用 template 方式整個專案 .zip 起來可以上傳 pip
+
 2023-04-17 09:56 Bowen
     改github repo名字變成 to-pip 以後統一 repo 都用減號
 
