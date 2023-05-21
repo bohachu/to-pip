@@ -1,9 +1,7 @@
-# to_pip.py
 import argparse
 import os
 import shutil
 import sys
-import tempfile
 
 
 def usage():
@@ -24,9 +22,8 @@ def parse_args():
 
 
 def create_package_dir(package_name, package_version, python_files):
-    tmp_dir = tempfile.mkdtemp()
-    package_dir = os.path.join(tmp_dir, f"{package_name}-{package_version}")
-    os.makedirs(package_dir)
+    package_dir = os.path.join(os.getcwd(), f"{package_name}-{package_version}")
+    os.makedirs(package_dir, exist_ok=True)
 
     for file in python_files:
         file_name = os.path.basename(file)
@@ -77,6 +74,12 @@ setup(
     with open(os.path.join(package_dir, "setup.py"), "w") as f:
         f.write(setup_py)
 
+    # Copy setup.py to the root directory
+    shutil.copy(os.path.join(package_dir, "setup.py"), "setup.py")
+    print("Successfully generated setup.py file")
+    print("To install the package from your GitHub repository, use the following command:")
+    print("pip install git+https://github.com/your_username/your_repo.git")
+
 
 def handle_readme(package_dir, package_name):
     if os.path.exists("README.md"):
@@ -119,8 +122,7 @@ def to_pip(python_files, package_name, package_version, pypi_username=None, pypi
         sys.exit(1)
     exit_code = os.system(f"cd {package_dir} && twine upload --config-file ~/.pypirc dist/*")
     if exit_code != 0:
-        print("Error: Failed to upload the package.")
-        sys.exit(1)
+        print("Error: Failed to upload the package. The package installation from GitHub is still possible.")
 
 
 def to_pip_args():

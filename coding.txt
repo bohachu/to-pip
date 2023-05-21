@@ -1,7 +1,12 @@
-2023-05-21 07:47 Bowen
-v2.0.7 重新改回原本的版本並且驗證
-python to_pip.py -n to-pip -v 2.0.7 to_pip.py hi.py
-hi.hi() 有作用沒有問題
+== 2023-05-21 14:13 Bowen
+    -v 2.1.0
+    我想讓上述執行之後，也留存 setup.py 可以放到 github 讓 github 檔案群也可以進行 pip 安裝，因為 pypi 現在當機也不能上傳套件，所以，我需要 github 能安裝的選項
+    使用此修改後的程式碼，在執行之後，會將 `setup.py` 生成並複製到根目錄中，並輸出生成成功的消息以及如何使用 `pip` 從 GitHub 存儲庫安置的說明。
+
+== 2023-05-21 07:47 Bowen
+    v2.0.7 重新改回原本的版本並且驗證
+    python to_pip.py -n to-pip -v 2.0.7 to_pip.py hi.py
+    hi.hi() 有作用沒有問題
 
 ==下面的實驗沒成功，錯誤是 import 時找不到套件
     我經過測試，上述的 to_pip.py 目前只能支援一個 .py 檔案上傳，我希望可以
