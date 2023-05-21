@@ -1,3 +1,16 @@
+2023-05-21 07:47 Bowen
+v2.0.7 重新改回原本的版本並且驗證
+python to_pip.py -n to-pip -v 2.0.7 to_pip.py hi.py
+hi.hi() 有作用沒有問題
+
+==下面的實驗沒成功，錯誤是 import 時找不到套件
+    我經過測試，上述的 to_pip.py 目前只能支援一個 .py 檔案上傳，我希望可以
+    001 增添支援 wildcard 例如 *.py 一次上傳所有的, 目前目錄下的全部 .py, 上傳到 pypi，也要可以支援子目錄，要可以支援非 .py 的檔案也能 wildcard 指定
+    002 增添支援指定 folder 就把該 folder 底下的所有東西也都打包上傳 pypi，包含 .py 以及非 .py 的全部都上傳 pypi
+    003 支援單一檔案指定 .py 檔案，也支援一個一個打檔案名稱多個檔案，都可以上傳 pypi, 允許指定某個子目錄路徑的 .py 檔案，允許多個，也允許非 .py 的其他副檔名
+    請先 step by step 分析如何改寫 cli in out 參數, 以及如何設計 function in out 參數，然後才根據 step by step 分析來改寫
+    我希望全面改寫上述程式碼，支援以上新功能。同時也全面給我新的 README.md cli 使用方法說明
+
 2023-04-17 11:18 Bowen
     todo 可以用 template 方式整個專案 .zip 起來可以上傳 pip
 
