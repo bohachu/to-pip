@@ -38,13 +38,13 @@ async def upload_files(
         saved_files.append(file_path)
 
     if readme:
-        readme_path = os.path.join(tmp_dir, "README.md")
+        readme_path = os.path.join(tmp_dir, "../README.md")
         with open(readme_path, "wb") as buffer:
             content = await readme.read()
             buffer.write(content)
 
     if requirements:
-        requirements_path = os.path.join(tmp_dir, "requirements.txt")
+        requirements_path = os.path.join(tmp_dir, "../requirements.txt")
         with open(requirements_path, "wb") as buffer:
             content = await requirements.read()
             buffer.write(content)

@@ -1,2 +1,6 @@
 .env
 .env.local
+dist
+build
+to_pip.egg-info
+

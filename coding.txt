@@ -1,5 +1,5 @@
 == 2023-11-30 21:37 Bowen
-    v3.11.30
+    v3.11.30 support dotenv .env PYPI_USERNAME PYPI_PASSWORD
 
 == 2023-05-21 14:13 Bowen
     -v 2.1.0
