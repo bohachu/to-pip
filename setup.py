@@ -1,4 +1,3 @@
-
 from setuptools import setup, find_packages
 
 with open('requirements.txt') as f:
@@ -6,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="to-pip",
-    version="2.1.0",
+    version="3.11.32",
     packages=find_packages(),
     py_modules=['to_pip'],
     install_requires=requirements,

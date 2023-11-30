@@ -1,0 +1,8 @@
+wheel
+fastapi~=0.95.0
+setuptools
+twine
+python-multipart
+uvicorn
+starlette~=0.26.1
+python-dotenv~=1.0.0

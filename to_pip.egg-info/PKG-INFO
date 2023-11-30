@@ -1,3 +1,12 @@
+Metadata-Version: 2.1
+Name: to-pip
+Version: 3.11.32
+Summary: UNKNOWN
+Home-page: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
+
 # to-pip
 
 `to-pip` is a tool that makes it easy to convert a set of Python files into a Python package that can be uploaded to PyPI. It can also upload the package to PyPI for you, if you provide your PyPI credentials. 
@@ -57,3 +66,5 @@ Let's say you have two Python files, `hello.py` and `world.py`, that you want to
 ```
 python -m to_pip -n helloworld -v 1.0.0 hello.py world.py
 ```
+
+
