@@ -78,12 +78,7 @@ setup(
 
     with open(os.path.join(package_dir, "setup.py"), "w") as f:
         f.write(setup_py)
-
-    # Copy setup.py to the root directory
     shutil.copy(os.path.join(package_dir, "setup.py"), "setup.py")
-    print("Successfully generated setup.py file")
-    print("To install the package from your GitHub repository, use the following command:")
-    print("pip install git+https://github.com/your_username/your_repo.git")
 
 
 def handle_readme(package_dir, package_name):
