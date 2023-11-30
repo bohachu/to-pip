@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="to-pip",
-    version="3.11.33",
+    version="3.11.36",
     packages=find_packages(),
     py_modules=['to_pip'],
     install_requires=requirements,

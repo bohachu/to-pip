@@ -1,9 +1,13 @@
 import argparse
 import os
 import shutil
+import subprocess
 import sys
+
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 def usage():
     print(
@@ -116,14 +120,15 @@ def to_pip(python_files, package_name, package_version, pypi_username=None, pypi
     if pypi_username and pypi_password:
         create_pypirc_file(pypi_username, pypi_password)
 
-    # Build the package before uploading
-    build_exit_code = os.system(f"cd {package_dir} && python setup.py sdist bdist_wheel")
-    if build_exit_code != 0:
-        print("Error: Failed to build the package.")
-        sys.exit(1)
-    exit_code = os.system(f"cd {package_dir} && twine upload --config-file ~/.pypirc dist/*")
+    build_command = f"cd {package_dir} && python setup.py sdist bdist_wheel"
+    exit_code = subprocess.call(build_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if exit_code != 0:
-        print("Error: Failed to upload the package. The package installation from GitHub is still possible.")
+        sys.exit(1)
+    upload_command = f"cd {package_dir} && twine upload --config-file ~/.pypirc dist/*"
+    exit_code = subprocess.call(upload_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if exit_code != 0:
+        sys.exit(1)
+    print(f"Package {package_name} successfully uploaded to PyPI.")
 
 
 def to_pip_args():

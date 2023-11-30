@@ -1,7 +1,12 @@
 Metadata-Version: 2.1
 Name: to-pip
-Version: 3.11.33
+Version: 3.11.36
 Description-Content-Type: text/markdown
+Requires-Dist: wheel
+Requires-Dist: setuptools
+Requires-Dist: twine
+Requires-Dist: python-dotenv
+Requires-Dist: build
 
 # to-pip
 

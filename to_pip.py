@@ -1,9 +1,13 @@
 import argparse
 import os
 import shutil
+import subprocess
 import sys
+
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 def usage():
     print(
@@ -105,6 +109,14 @@ password: {pypi_password}
         f.write(pypirc_content)
 
 
+def create_manifest_file(package_dir):
+    manifest_path = os.path.join(package_dir, "MANIFEST.in")
+    if not os.path.exists(manifest_path):
+        with open(manifest_path, 'w') as manifest_file:
+            manifest_file.write("include requirements.txt\n")
+            manifest_file.write("include README.md\n")
+
+
 def to_pip(python_files, package_name, package_version, pypi_username=None, pypi_password=None):
     if not python_files:
         usage()
@@ -112,18 +124,28 @@ def to_pip(python_files, package_name, package_version, pypi_username=None, pypi
     package_dir = create_package_dir(package_name, package_version, python_files)
     write_setup_py(package_dir, package_name, package_version, python_files)
     handle_readme(package_dir, package_name)
+    create_manifest_file(package_dir)
 
     if pypi_username and pypi_password:
         create_pypirc_file(pypi_username, pypi_password)
 
-    # Build the package before uploading
-    build_exit_code = os.system(f"cd {package_dir} && python setup.py sdist bdist_wheel")
-    if build_exit_code != 0:
+    # 使用 build 模塊來構建包
+    build_command = "python -m build"
+    exit_code = subprocess.call(build_command, cwd=package_dir, shell=True, stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
+    if exit_code != 0:
         print("Error: Failed to build the package.")
         sys.exit(1)
-    exit_code = os.system(f"cd {package_dir} && twine upload --config-file ~/.pypirc dist/*")
+
+    # 上傳包到 PyPI
+    upload_command = "twine upload --config-file ~/.pypirc dist/*"
+    exit_code = subprocess.call(upload_command, cwd=package_dir, shell=True, stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
     if exit_code != 0:
-        print("Error: Failed to upload the package. The package installation from GitHub is still possible.")
+        print("Error: Failed to upload the package.")
+        sys.exit(1)
+
+    print(f"Package {package_name} successfully uploaded to PyPI.")
 
 
 def to_pip_args():
