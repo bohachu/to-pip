@@ -1,10 +1,6 @@
 Metadata-Version: 2.1
 Name: to-pip
-Version: 3.11.32
-Summary: UNKNOWN
-Home-page: UNKNOWN
-License: UNKNOWN
-Platform: UNKNOWN
+Version: 3.11.33
 Description-Content-Type: text/markdown
 
 # to-pip
@@ -66,5 +62,3 @@ Let's say you have two Python files, `hello.py` and `world.py`, that you want to
 ```
 python -m to_pip -n helloworld -v 1.0.0 hello.py world.py
 ```
-
-
